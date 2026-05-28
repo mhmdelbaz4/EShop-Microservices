@@ -1,13 +1,19 @@
+using BuildingBlocks.Behaviors;
+using BuildingBlocks.Exceptions.Handlers;
 using Carter;
+using FluentValidation;
 using Marten;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCarter();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    config.AddOpenBehaviors([typeof(ValidationBehavior<,>)]);
 });
+
 builder.Services.AddMarten(options =>
 {
     string connectionString = builder.Configuration.GetConnectionString("CatalogDb")
@@ -15,8 +21,10 @@ builder.Services.AddMarten(options =>
     options.Connection(connectionString);
 }).UseLightweightSessions();
 
-var app = builder.Build();
-app.MapCarter();
-app.UseHttpsRedirection();
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+var app = builder.Build();
+app.UseHttpsRedirection();
+app.UseExceptionHandler(options => { });
+app.MapCarter();
 app.Run();
