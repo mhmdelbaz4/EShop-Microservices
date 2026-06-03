@@ -1,8 +1,8 @@
 ﻿namespace Catalog.Api.Features.Products.GetProducts;
 
-public record GetProductsDto(string category="",
-                             int pageNumber = 1,
-                             int pageSize = 10);
+public record GetProductsDto(string? category="",
+                             int? pageNumber = 1,
+                             int? pageSize = 10);
 
 public class GetProductsEndpoint : ICarterModule
 {

@@ -10,15 +10,9 @@ public class GetProductByIdEndpoint : ICarterModule
     {
         app.MapGet("/products/{id:guid}", async ([FromRoute]Guid id, ISender sender) =>
         {
-            try
-            {
-                var response = await sender.Send(new GetProductByIdQuery(id));
-                return Results.Ok(response);
-            }
-            catch (NotFoundException ex)
-            {
-                return Results.NotFound(ex.Message);
-            }
+            var response = await sender.Send(new GetProductByIdQuery(id));
+            return Results.Ok(response);
+
         }).WithName("GetProductById")
           .Produces<Product>(StatusCodes.Status200OK)
           .ProducesProblem(StatusCodes.Status404NotFound)

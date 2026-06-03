@@ -1,8 +1,6 @@
-using BuildingBlocks.Behaviors;
-using BuildingBlocks.Exceptions.Handlers;
-using Carter;
-using FluentValidation;
-using Marten;
+using HealthChecks.NpgSql;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +9,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    config.AddOpenBehaviors([typeof(LoggingBehavior<,>)]);
     config.AddOpenBehaviors([typeof(ValidationBehavior<,>)]);
 });
 
@@ -21,10 +20,19 @@ builder.Services.AddMarten(options =>
     options.Connection(connectionString);
 }).UseLightweightSessions();
 
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+if (builder.Environment.IsDevelopment())
+    builder.Services.InitializeMartenWith<InitialData>();
+
+builder.Services.AddHealthChecks()
+                    .AddNpgSql(builder.Configuration.GetConnectionString("CatalogDb")!);
 
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseExceptionHandler(options => { });
+app.UseHealthChecks("/health",new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 app.MapCarter();
 app.Run();
