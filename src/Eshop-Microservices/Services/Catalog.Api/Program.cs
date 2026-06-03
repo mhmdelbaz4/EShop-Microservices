@@ -1,4 +1,3 @@
-using HealthChecks.NpgSql;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
