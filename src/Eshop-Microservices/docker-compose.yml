@@ -8,5 +8,9 @@ services:
       context: .
       dockerfile: Services/Catalog.Api/Dockerfile
 
+  basketDb:
+    image: postgres
+
 volumes:
   postgres_catalogDb:
+  postgres_basketDb:

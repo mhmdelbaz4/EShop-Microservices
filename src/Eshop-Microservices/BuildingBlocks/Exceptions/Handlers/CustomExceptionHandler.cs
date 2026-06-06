@@ -23,7 +23,7 @@ public class CustomExceptionHandler : IExceptionHandler
             NotFoundException => new ProblemDetails
             {
                 Status = (int)HttpStatusCode.NotFound,
-                Title = "Resource Not Found"
+                Title = exception.Message
             },
             InternalServerException => new ProblemDetails
             {
