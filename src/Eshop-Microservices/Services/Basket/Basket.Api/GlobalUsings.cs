@@ -7,3 +7,5 @@ global using BuildingBlocks.CQRS;
 global using BuildingBlocks.Behaviors;
 global using Basket.Api.Data;
 global using Marten.Schema;
+global using BuildingBlocks.Exceptions.Handlers;
+global using Microsoft.Extensions.Caching.Distributed;
